@@ -1,24 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Banner from "./components/Banner";
+import Header from "./components/Header";
+import { Routes, Route } from "react-router-dom";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { useEffect } from "react";
+import ProductFeed from "./components/ProductFeed";
+import { setproducts } from "./Redux/productSlice";
+import { useDispatch } from "react-redux";
+import Cart from "./components/Cart";
+import Details from "./components/Details";
+import Footer from "./components/Footer";
 
 function App() {
+  const dispatch = useDispatch();
+
+  const getData = async () => {
+    const productinfo = await fetch("https://fakestoreapi.com/products").then(
+      (res) => res.json()
+    );
+    dispatch(setproducts(productinfo));
+  };
+  useEffect(() => {
+    const gettingit = () => {
+      getData();
+    };
+    return gettingit();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Routes>
+        <Route
+          exact
+          path="/"
+          element={
+            <>
+              <div className="app">
+                <Header />
+                <Banner />
+                <ProductFeed />
+                <Footer />
+              </div>
+            </>
+          }
+        />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/details" element={<Details />} />
+      </Routes>
+    </>
   );
 }
 
